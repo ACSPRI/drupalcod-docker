@@ -1,0 +1,34 @@
+# Drupal with mariadb
+
+version: '2'
+
+services:
+
+  drupal:
+    image: acspri/drupalcod
+    ports:
+      - 8080:80
+    volumes:
+      - /var/www/html
+    restart: always
+    links:
+      - mysql
+
+  mysql:
+    image: mariadb
+    environment:
+        MYSQL_ROOT_PASSWORD: drupal
+        MYSQL_DATABASE: drupal
+        MYSQL_USER: drupal
+        MYSQL_PASSWORD: drupal
+    restart: always
+
+  drush:
+    image: drush/drush:8
+    volumes_from:
+      - drupal
+    links:
+        - mysql
+    entrypoint:
+      - drush
+      - "--root=/var/www/html"
